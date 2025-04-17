@@ -1,3 +1,5 @@
 class Analyzer:
     def analyze(self, track):
-        return {"frequency": 0, "intensity": 0}
+        if track:
+            return f"Analysis for {track['title']} - {track['artist']}: Frequency = 440Hz, Intensity = 0.5 (placeholder)"
+        return "No track selected for analysis!"

@@ -1,11 +1,15 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QTabWidget, QPushButton, QListWidget, QHBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QTabWidget, QPushButton, QListWidget, QHBoxLayout, QMessageBox
 from src.core.library import LibraryManager
+from src.core.player import PlayerManager
+from src.core.analyzer import Analyzer
 
 class MainWindow(QMainWindow):
     def __init__(self, role):
         super().__init__()
         self.role = role
         self.library_manager = LibraryManager()
+        self.player_manager = PlayerManager()
+        self.analyzer = Analyzer()  # Инициализируем Analyzer
         self.setWindowTitle("Music Analyzer")
         self.setMinimumSize(800, 600)
         self.init_ui()
@@ -27,7 +31,6 @@ class MainWindow(QMainWindow):
         library_layout.addWidget(self.library_list)
 
         if self.role == "user":
-            # Создаём горизонтальный layout для кнопок
             button_layout = QHBoxLayout()
             add_track_button = QPushButton("Add Track")
             add_track_button.clicked.connect(self.add_track)
@@ -45,10 +48,13 @@ class MainWindow(QMainWindow):
         # Вкладка "Player"
         player_tab = QWidget()
         player_layout = QVBoxLayout()
-        player_layout.addWidget(QLabel("Player Controls (Play/Pause)"))
+        player_layout.addWidget(QLabel("Player Controls"))
         play_button = QPushButton("Play")
         play_button.clicked.connect(self.play_track)
         player_layout.addWidget(play_button)
+        pause_button = QPushButton("Pause")
+        pause_button.clicked.connect(self.pause_track)
+        player_layout.addWidget(pause_button)
         player_tab.setLayout(player_layout)
         tabs.addTab(player_tab, "Player")
 
@@ -56,7 +62,9 @@ class MainWindow(QMainWindow):
         analyzer_tab = QWidget()
         analyzer_layout = QVBoxLayout()
         if self.role == "user":
-            analyzer_layout.addWidget(QLabel("Analyzer: Spectrum and Waveform (Placeholder)"))
+            analyzer_layout.addWidget(QLabel("Analyzer: Spectrum and Waveform"))
+            self.analysis_result = QLabel("Select a track and click Analyze.")
+            analyzer_layout.addWidget(self.analysis_result)
             analyze_button = QPushButton("Analyze")
             analyze_button.clicked.connect(self.analyze_track)
             analyzer_layout.addWidget(analyze_button)
@@ -73,16 +81,36 @@ class MainWindow(QMainWindow):
         self.library_list.addItem(f"{new_track['title']} - {new_track['artist']}")
 
     def delete_track(self):
-        selected_item = self.library_list.currentItem()  # Получаем выбранный элемент
+        selected_item = self.library_list.currentItem()
         if selected_item:
-            # Извлекаем ID трека из текста (предполагаем, что ID совпадает с индексом + 1)
-            track_text = selected_item.text()
-            track_index = self.library_list.row(selected_item) + 1  # ID трека
-            self.library_manager.remove_track(track_index)  # Удаляем трек из LibraryManager
-            self.library_list.takeItem(self.library_list.row(selected_item))  # Удаляем из списка в UI
+            reply = QMessageBox.question(self, "Delete Track", "Are you sure you want to delete this track?",
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                track_index = self.library_list.row(selected_item) + 1
+                self.library_manager.remove_track(track_index)
+                self.library_list.takeItem(self.library_list.row(selected_item))
+        else:
+            QMessageBox.warning(self, "No Track Selected", "Please select a track to delete.")
 
     def play_track(self):
-        print("Playing track (placeholder)")
+        selected_item = self.library_list.currentItem()
+        if selected_item:
+            track_index = self.library_list.row(selected_item)
+            track = self.library_manager.get_tracks()[track_index]
+            self.player_manager.set_track(track)
+            self.player_manager.play()
+        else:
+            QMessageBox.warning(self, "No Track Selected", "Please select a track to play.")
+
+    def pause_track(self):
+        self.player_manager.pause()
 
     def analyze_track(self):
-        print("Analyzing track (placeholder)")
+        selected_item = self.library_list.currentItem()
+        if selected_item:
+            track_index = self.library_list.row(selected_item)
+            track = self.library_manager.get_tracks()[track_index]
+            result = self.analyzer.analyze(track)
+            self.analysis_result.setText(result)
+        else:
+            self.analysis_result.setText("No track selected for analysis!")
