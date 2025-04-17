@@ -1,7 +1,7 @@
 import sys
 import os
 
-# Добавляем корневую директорию проекта в sys.path
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel
@@ -13,7 +13,7 @@ class LoginWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Music Analyzer - Login")
         self.auth_manager = AuthManager()
-        self.setMinimumSize(400, 300)  # Устанавливаем минимальный размер окна (ширина, высота)
+        self.setMinimumSize(400, 300)  
         self.init_ui()
 
     def init_ui(self):

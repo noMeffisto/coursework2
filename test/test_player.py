@@ -3,7 +3,6 @@ import sys
 import os
 import logging
 
-# Добавляем корневую директорию проекта в sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.core.player import PlayerManager

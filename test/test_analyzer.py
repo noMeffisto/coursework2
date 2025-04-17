@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-# Добавляем корневую директорию проекта в sys.path
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.core.analyzer import Analyzer
