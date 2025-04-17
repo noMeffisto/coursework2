@@ -1,0 +1,5 @@
+PyQt5
+mutagen
+numpy
+scipy
+matplotlib
