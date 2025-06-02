@@ -1,0 +1,106 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Управление водителями{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Управление водителями</h2>
+
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Список водителей -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Водители и их транспорт</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ФИО</th>
+                            <th>Опыт</th>
+                            <th>Категории прав</th>
+                            <th>Текущий транспорт</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for driver in drivers %}
+                        <tr>
+                            <td>#{{ driver.id }}</td>
+                            <td>{{ driver.user.get_full_name }}</td>
+                            <td>{{ driver.experience }} лет</td>
+                            <td>{{ driver.categories }}</td>
+                            <td>
+                                <form method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="assign_vehicle" value="1">
+                                    <input type="hidden" name="driver_id" value="{{ driver.id }}">
+                                    <select name="vehicle_id" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+                                        <option value="">Выберите транспорт</option>
+                                        {% for vehicle in available_vehicles %}
+                                        <option value="{{ vehicle.id }}" {% if driver.vehicle and driver.vehicle.id == vehicle.id %}selected{% endif %}>
+                                            {{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.plate_number }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#driverDetailsModal{{ driver.id }}">
+                                    Детали
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Модальное окно с деталями водителя -->
+                        <div class="modal fade" id="driverDetailsModal{{ driver.id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Детали водителя #{{ driver.id }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>ФИО:</strong> {{ driver.user.get_full_name }}</p>
+                                                <p><strong>Email:</strong> {{ driver.user.email }}</p>
+                                                <p><strong>Телефон:</strong> {{ driver.phone }}</p>
+                                                <p><strong>Опыт:</strong> {{ driver.experience }} лет</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Категории прав:</strong> {{ driver.categories }}</p>
+                                                <p><strong>Дата рождения:</strong> {{ driver.birth_date }}</p>
+                                                {% if driver.photo %}
+                                                <img src="{{ driver.photo.url }}" alt="Фото водителя" class="img-fluid mt-2">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Нет водителей</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

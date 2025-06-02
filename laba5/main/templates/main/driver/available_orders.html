@@ -1,0 +1,65 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Доступные заказы{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Доступные заказы</h2>
+
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if available_orders %}
+    <div class="row">
+        {% for order in available_orders %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Заказ #{{ order.id }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Детали заказа:</h6>
+                        <p><strong>Услуга:</strong> {{ order.service.name }}</p>
+                        <p><strong>Тип груза:</strong> {{ order.cargo_type.name }}</p>
+                        <p><strong>Вес:</strong> {{ order.weight }} кг</p>
+                        <p><strong>Объем:</strong> {{ order.volume }} м³</p>
+                        <p><strong>Дата доставки:</strong> {{ order.scheduled_date|default:"Не указана" }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Маршрут:</h6>
+                        <p><strong>Загрузка:</strong> {{ order.pickup_address }}</p>
+                        <p><strong>Доставка:</strong> {{ order.delivery_address }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <p><strong>Стоимость:</strong> {{ order.total_price }} руб.</p>
+                        {% if order.notes %}
+                        <p><strong>Примечания:</strong> {{ order.notes }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <form method="post" action="{% url 'main:take_order' order.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Взять заказ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        На данный момент нет доступных заказов.
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

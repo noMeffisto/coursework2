@@ -1,0 +1,106 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Главная - Грузоперевозки{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="jumbotron bg-primary text-white rounded p-5 mb-4">
+        <h1 class="display-4">Надежные грузоперевозки</h1>
+        <p class="lead">Доставляем ваши грузы быстро, безопасно и по лучшим ценам</p>
+        <hr class="my-4">
+        <p>Более 1000 довольных клиентов уже воспользовались нашими услугами</p>
+        <a class="btn btn-light btn-lg" href="{% url 'main:service_catalog' %}" role="button">Заказать перевозку</a>
+    </div>
+
+    <!-- Services Preview -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-truck"></i> Грузоперевозки</h5>
+                    <p class="card-text">Перевозка грузов любого объема и веса по всей стране</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-box"></i> Упаковка</h5>
+                    <p class="card-text">Профессиональная упаковка грузов для безопасной транспортировки</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-warehouse"></i> Хранение</h5>
+                    <p class="card-text">Временное хранение грузов на наших складах</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Секция с последними новостями -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4">Последние новости</h2>
+            <div class="row">
+                {% for news_item in latest_news %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if news_item.image %}
+                        <img src="{{ news_item.image.url }}" class="card-img-top" alt="{{ news_item.title }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ news_item.title }}</h5>
+                            <p class="card-text">{{ news_item.content|truncatewords:30 }}</p>
+                            <p class="text-muted">
+                                <small>{{ news_item.created_at|date:"d.m.Y" }}</small>
+                            </p>
+                            <a href="{% url 'main:news_detail' news_item.id %}" class="btn btn-primary">Читать далее</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-center">Новостей пока нет</p>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'main:news_list' %}" class="btn btn-outline-primary">Все новости</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mt-4 text-center">
+        <div class="col-md-3">
+            <div class="border rounded p-3">
+                <h3>1000+</h3>
+                <p>Довольных клиентов</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="border rounded p-3">
+                <h3>50+</h3>
+                <p>Единиц техники</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="border rounded p-3">
+                <h3>100+</h3>
+                <p>Профессиональных водителей</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="border rounded p-3">
+                <h3>24/7</h3>
+                <p>Работаем круглосуточно</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

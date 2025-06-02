@@ -1,0 +1,98 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Новости - Грузоперевозки{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Новости компании</h1>
+
+    {% if news_list %}
+        <!-- Featured News - Можно будет сделать динамическим, выводя первую новость или специальную "главную" новость -->
+        {% with featured_news=news_list.0 %}
+        <div class="row mb-5">
+            <div class="col-md-8">
+                <div class="card">
+                    {% if featured_news.image %}
+                    <img src="{{ featured_news.image.url }}" 
+                         class="card-img-top" alt="{{ featured_news.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/800x400.png?text=Новость" 
+                         class="card-img-top" alt="Новость">
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="card-title"><a href="{% url 'main:news_detail' featured_news.id %}">{{ featured_news.title }}</a></h2>
+                        <p class="card-text">{{ featured_news.content|truncatewords:50 }}</p>
+                        <p class="text-muted">{{ featured_news.created_at|date:"d M Y" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                {% if news_list|length > 1 %}
+                    {% with secondary_news=news_list.1 %}
+                    <div class="card mb-4">
+                        {% if secondary_news.image %}
+                        <img src="{{ secondary_news.image.url }}" 
+                             class="card-img-top" alt="{{ secondary_news.title }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/400x200.png?text=Новость" 
+                             class="card-img-top" alt="Новость">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="{% url 'main:news_detail' secondary_news.id %}">{{ secondary_news.title }}</a></h5>
+                            <p class="card-text">{{ secondary_news.content|truncatewords:20 }}</p>
+                            <p class="text-muted">{{ secondary_news.created_at|date:"d M Y" }}</p>
+                        </div>
+                    </div>
+                    {% endwith %}
+                {% endif %}
+            </div>
+        </div>
+        {% endwith %}
+
+        <!-- News Grid -->
+        <div class="row">
+            {% for news_item in news_list %}
+            {# Пропускаем первые две новости, так как они могут быть в секции Featured #}
+            {# Однако, если вы хотите, чтобы все новости были в сетке, удалите этот if #}
+            {% if forloop.counter0 > 1 or news_list|length <= 2 %} 
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if news_item.image %}
+                    <img src="{{ news_item.image.url }}" 
+                         class="card-img-top" alt="{{ news_item.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/400x300.png?text=Новость" 
+                         class="card-img-top" alt="Новость">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{% url 'main:news_detail' news_item.id %}">{{ news_item.title }}</a></h5>
+                        <p class="card-text">{{ news_item.content|truncatewords:30 }}</p>
+                        <p class="text-muted">{{ news_item.created_at|date:"d M Y" }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <p>Пока нет новостей.</p>
+    {% endif %}
+
+    <!-- Pagination - эту секцию нужно будет сделать динамической, если будете использовать Paginator в views.py -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Предыдущая</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Следующая</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %} 

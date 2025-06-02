@@ -1,0 +1,182 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Заказ услуги {{ service.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="mb-0">Заказ услуги</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Информация об услуге -->
+                    <div class="service-info mb-4">
+                        <h3>{{ service.name }}</h3>
+                        <p class="text-muted">{{ service.description }}</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Базовая стоимость:</strong> {{ service.base_price }} ₽</p>
+                                <p><strong>Тип транспорта:</strong> {{ service.vehicle_type.name }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Максимальный вес:</strong> {{ service.max_weight }} кг</p>
+                                <p><strong>Максимальный объем:</strong> {{ service.max_volume }} м³</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Форма заказа -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="pickup_address" class="form-label">Адрес загрузки</label>
+                                    {{ form.pickup_address }}
+                                    {% if form.pickup_address.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.pickup_address.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="delivery_address" class="form-label">Адрес доставки</label>
+                                    {{ form.delivery_address }}
+                                    {% if form.delivery_address.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.delivery_address.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="weight" class="form-label">Вес груза (кг)</label>
+                                    {{ form.weight }}
+                                    {% if form.weight.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.weight.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="volume" class="form-label">Объем груза (м³)</label>
+                                    {{ form.volume }}
+                                    {% if form.volume.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.volume.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="cargo_type" class="form-label">Тип груза</label>
+                                    {{ form.cargo_type }}
+                                    {% if form.cargo_type.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cargo_type.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="scheduled_date" class="form-label">Дата доставки</label>
+                                    {{ form.scheduled_date }}
+                                    {% if form.scheduled_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.scheduled_date.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Дополнительные примечания</label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.notes.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'main:service_catalog' %}" class="btn btn-secondary">Назад к каталогу</a>
+                            <button type="submit" class="btn btn-primary">Оформить заказ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 10px;
+}
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+.service-info {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+.form-control {
+    border-radius: 8px;
+}
+.form-label {
+    font-weight: 500;
+}
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализация полей с датой
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(input => {
+        input.min = new Date().toISOString().split('T')[0];
+    });
+
+    // Валидация веса и объема
+    const weightInput = document.querySelector('input[name="weight"]');
+    const volumeInput = document.querySelector('input[name="volume"]');
+    const maxWeight = {{ service.max_weight }};
+    const maxVolume = {{ service.max_volume }};
+
+    function validateInput(input, maxValue, fieldName) {
+        const value = parseFloat(input.value);
+        if (value > maxValue) {
+            input.setCustomValidity(`${fieldName} не может превышать ${maxValue}`);
+            input.reportValidity();
+        } else {
+            input.setCustomValidity('');
+        }
+    }
+
+    if (weightInput) {
+        weightInput.addEventListener('input', () => validateInput(weightInput, maxWeight, 'Вес'));
+    }
+    if (volumeInput) {
+        volumeInput.addEventListener('input', () => validateInput(volumeInput, maxVolume, 'Объем'));
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Типы грузов{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Типы грузов</h1>
+
+    {% if cargo_types %}
+        <div class="row">
+            {% for cargo_type in cargo_types %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ cargo_type.name }}</h5>
+                            <p class="card-text">{{ cargo_type.description }}</p>
+                            {% if cargo_type.special_requirements %}
+                                <div class="alert alert-info">
+                                    <strong>Особые требования:</strong><br>
+                                    {{ cargo_type.special_requirements }}
+                                </div>
+                            {% endif %}
+                            
+                            {% with orders_count=cargo_type.order_set.filter.count %}
+                                <p class="text-muted">
+                                    Перевезено грузов этого типа: {{ orders_count }}
+                                </p>
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Типы грузов не найдены.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.alert {
+    margin-bottom: 0;
+    margin-top: 1rem;
+}
+</style>
+{% endblock %} 

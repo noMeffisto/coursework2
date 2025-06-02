@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Мои клиенты{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Мои клиенты</h1>
+
+    {% if clients %}
+        <div class="row">
+            {% for client in clients %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ client.user.get_full_name }}</h5>
+                            <p class="card-text">
+                                <strong>Телефон:</strong> {{ client.phone }}<br>
+                                {% if client.company_name %}
+                                    <strong>Компания:</strong> {{ client.company_name }}<br>
+                                {% endif %}
+                                <strong>Адрес:</strong> {{ client.address }}
+                            </p>
+                            
+                            {% with orders_count=client.order_set.filter.count %}
+                                <p class="text-muted">
+                                    Выполнено заказов: {{ orders_count }}
+                                </p>
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            У вас пока нет клиентов.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %} 

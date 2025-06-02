@@ -1,0 +1,99 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Моё расписание{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Моё расписание</h2>
+    
+    <!-- Форма добавления расписания -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Добавить время в расписание</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="date">Дата</label>
+                            <input type="date" class="form-control" id="date" name="date" required
+                                   min="{{ today|date:'Y-m-d' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="start_time">Начало</label>
+                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="end_time">Конец</label>
+                            <input type="time" class="form-control" id="end_time" name="end_time" required>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="is_available">Доступен</label>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="is_available" name="is_available" checked>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="notes">Примечания</label>
+                            <input type="text" class="form-control" id="notes" name="notes">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Добавить</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Текущее расписание -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Расписание на неделю</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Статус</th>
+                            <th>Примечания</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in schedules %}
+                        <tr>
+                            <td>{{ schedule.date|date:"d.m.Y" }}</td>
+                            <td>{{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}</td>
+                            <td>
+                                {% if schedule.is_available %}
+                                <span class="badge bg-success">Доступен</span>
+                                {% else %}
+                                <span class="badge bg-danger">Занят</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ schedule.notes|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">Нет записей в расписании</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

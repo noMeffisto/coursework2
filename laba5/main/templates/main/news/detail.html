@@ -1,0 +1,78 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ news.title }} - Новости{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'main:news_list' %}">Новости</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ news.title }}</li>
+        </ol>
+    </nav>
+
+    <article class="card">
+        <div class="card-body">
+            <h1 class="card-title mb-4">{{ news.title }}</h1>
+            
+            {% if news.image %}
+            <div class="text-center mb-4">
+                <img src="{{ news.image.url }}" class="img-fluid rounded" alt="{{ news.title }}">
+            </div>
+            {% endif %}
+            
+            <div class="mb-3">
+                <small class="text-muted">
+                    <i class="fas fa-user"></i> {{ news.author.get_full_name }}
+                    <span class="mx-2">|</span>
+                    <i class="fas fa-calendar"></i> {{ news.created_at|date:"d.m.Y H:i" }}
+                    {% if news.created_at != news.updated_at %}
+                    <span class="mx-2">|</span>
+                    <i class="fas fa-edit"></i> Обновлено: {{ news.updated_at|date:"d.m.Y H:i" }}
+                    {% endif %}
+                </small>
+            </div>
+
+            <div class="news-content">
+                {{ news.content|linebreaks }}
+            </div>
+        </div>
+    </article>
+
+    {% if user.is_staff %}
+    <div class="mt-4">
+        <a href="{% url 'main:news_edit' news.id %}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Редактировать
+        </a>
+        <a href="{% url 'main:news_delete' news.id %}" class="btn btn-danger" 
+           onclick="return confirm('Вы уверены, что хотите удалить эту новость?')">
+            <i class="fas fa-trash"></i> Удалить
+        </a>
+    </div>
+    {% endif %}
+
+    {% if other_news %}
+    <div class="mt-4">
+        <h3>Другие новости</h3>
+        <div class="row">
+            {% for item in other_news %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.title }}</h5>
+                        <p class="card-text">{{ item.content|truncatewords:20 }}</p>
+                        <a href="{% url 'main:news_detail' item.id %}" class="btn btn-primary">Читать далее</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

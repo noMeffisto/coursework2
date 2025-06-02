@@ -1,0 +1,61 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ vehicle.brand }} {{ vehicle.model }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="vehicle-detail">
+        <h1>{{ vehicle.brand }} {{ vehicle.model }}</h1>
+        
+        {% if vehicle.image %}
+        <div class="vehicle-image">
+            <img src="{{ vehicle.image.url }}" alt="{{ vehicle }}" class="img-fluid">
+        </div>
+        {% endif %}
+        
+        <div class="vehicle-info">
+            <p><strong>Гос. номер:</strong> {{ vehicle.plate_number }}</p>
+            <p><strong>Тип:</strong> {{ vehicle.type.name }}</p>
+            <p><strong>Тип кузова:</strong> {{ vehicle.body_type.name }}</p>
+            <p><strong>Год выпуска:</strong> {{ vehicle.year }}</p>
+            <p><strong>Грузоподъемность:</strong> {{ vehicle.capacity }} кг</p>
+            <p><strong>Статус:</strong> {% if vehicle.is_available %}Доступен{% else %}Занят{% endif %}</p>
+        </div>
+
+        {% if user.is_staff %}
+        <div class="admin-actions">
+            <a href="{% url 'admin:main_vehicle_change' vehicle.id %}" class="btn btn-primary">Редактировать</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.vehicle-detail {
+    padding: 20px;
+}
+
+.vehicle-image {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.vehicle-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.vehicle-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.admin-actions {
+    margin-top: 20px;
+}
+</style>
+{% endblock %} 

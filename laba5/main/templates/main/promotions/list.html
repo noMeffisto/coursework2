@@ -1,0 +1,127 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Акции и промокоды{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Действующие акции и промокоды</h1>
+
+    <div class="promotions-grid">
+        {% for promotion in promotions %}
+        <div class="promotion-card">
+            <div class="discount-badge">-{{ promotion.discount_percent }}%</div>
+            <h3>{{ promotion.code }}</h3>
+            <p class="description">{{ promotion.description }}</p>
+            <div class="promotion-details">
+                <p><strong>Действует до:</strong> {{ promotion.end_date|date:"d.m.Y" }}</p>
+                {% if promotion.max_uses %}
+                <p><strong>Осталось использований:</strong> {{ promotion.uses_left }}</p>
+                {% endif %}
+            </div>
+            {% if user.is_authenticated and user.client %}
+            <button class="btn btn-primary copy-code" data-code="{{ promotion.code }}">
+                Скопировать код
+            </button>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="no-promotions">В данный момент нет действующих акций</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.promotions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.promotion-card {
+    position: relative;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.discount-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #e53935;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.promotion-card h3 {
+    color: #1a237e;
+    margin: 1rem 0;
+    font-size: 1.5rem;
+}
+
+.description {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.promotion-details {
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.promotion-details p {
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.copy-code {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.copy-code:hover {
+    background-color: #0d47a1;
+}
+
+.no-promotions {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: #666;
+}
+</style>
+
+<script>
+document.querySelectorAll('.copy-code').forEach(button => {
+    button.addEventListener('click', function() {
+        const code = this.dataset.code;
+        navigator.clipboard.writeText(code).then(() => {
+            const originalText = this.textContent;
+            this.textContent = 'Код скопирован!';
+            this.style.backgroundColor = '#4caf50';
+            setTimeout(() => {
+                this.textContent = originalText;
+                this.style.backgroundColor = '#1a237e';
+            }, 2000);
+        });
+    });
+});
+</script>
+{% endblock %} 

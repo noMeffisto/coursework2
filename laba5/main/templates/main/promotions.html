@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Акции и промокоды</h1>
+    <div class="promotions-list">
+        <div class="promotion">
+            <h2>Скидка для новых клиентов</h2>
+            <p class="promo-code">NEWCLIENT2025</p>
+            <p class="discount">Скидка 10% на первую перевозку</p>
+            <p class="validity">Действует до 31.12.2025</p>
+            <p class="description">Воспользуйтесь скидкой при оформлении первого заказа на нашем сайте.</p>
+        </div>
+
+        <div class="promotion">
+            <h2>Межгородская перевозка</h2>
+            <p class="promo-code">INTERCITY25</p>
+            <p class="discount">Скидка 15% на межгородские перевозки</p>
+            <p class="validity">Действует до 01.09.2025</p>
+            <p class="description">Скидка действует на перевозки между городами на расстояние более 1000 км.</p>
+        </div>
+
+        <div class="promotion">
+            <h2>Постоянным клиентам</h2>
+            <p class="promo-code">LOYAL2025</p>
+            <p class="discount">Скидка 20% на пятую перевозку</p>
+            <p class="validity">Действует до 31.12.2025</p>
+            <p class="description">Автоматически применяется для клиентов, совершивших более 4 перевозок.</p>
+        </div>
+    </div>
+
+    <div class="promo-terms">
+        <h2>Условия использования промокодов</h2>
+        <ul>
+            <li>Промокод необходимо указать при оформлении заказа</li>
+            <li>Скидки по разным промокодам не суммируются</li>
+            <li>Компания оставляет за собой право изменять условия акций</li>
+        </ul>
+    </div>
+</div>
+{% endblock %} 

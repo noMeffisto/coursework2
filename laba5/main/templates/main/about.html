@@ -1,0 +1,125 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if about_content and about_content.title %}
+        {{ about_content.title }} - CargoTransportation
+    {% else %}
+        О нас - CargoTransportation
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="bg-light p-5 rounded mb-4">
+        <h1 class="display-4">
+            {% if about_content and about_content.title %}
+                {{ about_content.title }}
+            {% else %}
+                О нашей компании
+            {% endif %}
+        </h1>
+        {% if about_content and about_content.content %}
+            <div class="lead">{{ about_content.content|safe }}</div>
+        {% else %}
+            <p class="lead">Мы - команда профессионалов в сфере грузоперевозок с многолетним опытом работы. Информация о компании скоро будет обновлена.</p>
+        {% endif %}
+    </div>
+
+    <!-- Company Info -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h2>
+                {% if about_content and about_content.mission_title %}
+                    {{ about_content.mission_title }}
+                {% else %}
+                    Наша миссия
+                {% endif %}
+            </h2>
+            {% if about_content and about_content.mission_text %}
+                <p>{{ about_content.mission_text|safe }}</p>
+            {% else %}
+                <p>Обеспечивать качественные и надежные грузоперевозки, помогая бизнесу и частным клиентам решать логистические задачи любой сложности.</p>
+            {% endif %}
+            
+            <h3>
+                {% if about_content and about_content.values_title %}
+                    {{ about_content.values_title }}
+                {% else %}
+                    Наши ценности:
+                {% endif %}
+            </h3>
+            {% if about_content and about_content.values_text %}
+                <div>{{ about_content.values_text|safe }}</div>
+            {% else %}
+                <ul>
+                    <li>Профессионализм и ответственность</li>
+                    <li>Индивидуальный подход к каждому клиенту</li>
+                    <li>Безопасность и надежность перевозок</li>
+                    <li>Прозрачность в работе</li>
+                </ul>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <img src="https://biggy.kiev.ua/wp-content/uploads/2021/01/%D0%93%D1%80%D1%83%D0%B7%D0%BE%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B8-%D0%BD%D0%B5%D0%B4%D0%BE%D1%80%D0%BE%D0%B3%D0%BE.png" 
+                 class="img-fluid rounded" alt="О компании">
+        </div>
+    </div>
+
+    <!-- Our Team -->
+    <h2 class="mb-4">Наша команда</h2>
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://gorodvitebsk.by/images_data/test/be7cdf76ba258e3d258fa848c8e97ae0.jpg" 
+                     class="card-img-top" alt="Водитель">
+                <div class="card-body">
+                    <h5 class="card-title">Опытные водители</h5>
+                    <p class="card-text">Наши водители имеют многолетний опыт и все необходимые категории для управления грузовым транспортом.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://i-logistica.ru/upload/iblock/f91/f916b23424467fbc0c91abd9049e4d9a.jpg" 
+                     class="card-img-top" alt="Логисты">
+                <div class="card-body">
+                    <h5 class="card-title">Профессиональные логисты</h5>
+                    <p class="card-text">Команда логистов оптимизирует маршруты и обеспечивает своевременную доставку.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://motor-m.kiev.ua/images/header-car.webp" 
+                     class="card-img-top" alt="Техники">
+                <div class="card-body">
+                    <h5 class="card-title">Технические специалисты</h5>
+                    <p class="card-text">Наши механики поддерживают автопарк в идеальном техническом состоянии.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row text-center bg-light p-4 rounded">
+        <div class="col-md-3">
+            <h3>10+</h3>
+            <p>Лет на рынке</p>
+        </div>
+        <div class="col-md-3">
+            <h3>5000+</h3>
+            <p>Выполненных заказов</p>
+        </div>
+        <div class="col-md-3">
+            <h3>95%</h3>
+            <p>Довольных клиентов</p>
+        </div>
+        <div class="col-md-3">
+            <h3>500+</h3>
+            <p>Постоянных клиентов</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

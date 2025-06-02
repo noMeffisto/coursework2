@@ -1,0 +1,102 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Мои заказы{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Мои заказы</h2>
+    
+    <!-- Фильтр по статусу -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row align-items-end">
+                <div class="col-md-4">
+                    <label for="status">Фильтр по статусу:</label>
+                    <select name="status" id="status" class="form-select" onchange="this.form.submit()">
+                        <option value="">Все заказы</option>
+                        {% for status_code, status_name in status_choices %}
+                        <option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>
+                            {{ status_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список заказов -->
+    {% if orders %}
+    <div class="row">
+        {% for order in orders %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Заказ #{{ order.id }}</h5>
+                    <span class="badge {% if order.status == 'completed' %}bg-success{% elif order.status == 'cancelled' %}bg-danger{% elif order.status == 'in_progress' %}bg-primary{% else %}bg-warning{% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Клиент:</strong> {{ order.client.user.get_full_name }}</p>
+                            <p><strong>Тип груза:</strong> {{ order.cargo_type.name }}</p>
+                            <p><strong>Вес:</strong> {{ order.weight }} кг</p>
+                            <p><strong>Объем:</strong> {{ order.volume }} м³</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Дата:</strong> {% if order.scheduled_date %}{{ order.scheduled_date|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                            <p><strong>Время:</strong> {% if order.scheduled_time %}{{ order.scheduled_time|time:"H:i" }}{% else %}-{% endif %}</p>
+                            <p><strong>Создан:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                            <p><strong>Стоимость:</strong> {{ order.total_price }} руб.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Адреса:</h6>
+                        <p><strong>Загрузка:</strong> {{ order.pickup_address }}</p>
+                        <p><strong>Доставка:</strong> {{ order.delivery_address }}</p>
+                    </div>
+
+                    {% if order.notes %}
+                    <div class="alert alert-info mb-3">
+                        <strong>Примечания:</strong><br>
+                        {{ order.notes }}
+                    </div>
+                    {% endif %}
+
+                    {% if order.status == 'pending' or order.status == 'in_progress' %}
+                    <div class="d-flex gap-2">
+                        <form method="post" action="{% url 'main:update_order_status' order.id %}">
+                            {% csrf_token %}
+                            {% if order.status == 'pending' %}
+                            <input type="hidden" name="status" value="in_progress">
+                            <button type="submit" class="btn btn-primary">Начать выполнение</button>
+                            {% elif order.status == 'in_progress' %}
+                            <input type="hidden" name="status" value="completed">
+                            <button type="submit" class="btn btn-success">Завершить</button>
+                            {% endif %}
+                        </form>
+                        {% if order.status == 'pending' %}
+                        <form method="post" action="{% url 'main:update_order_status' order.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="status" value="cancelled">
+                            <button type="submit" class="btn btn-danger">Отменить</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        У вас пока нет заказов.
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

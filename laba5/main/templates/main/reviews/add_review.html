@@ -1,0 +1,57 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Добавить отзыв{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Добавить отзыв о заказе #{{ order.id }}</h1>
+
+    <div class="review-form">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="rating">Оценка</label>
+                <select name="rating" id="rating" class="form-control" required>
+                    <option value="">Выберите оценку</option>
+                    <option value="5">5 - Отлично</option>
+                    <option value="4">4 - Хорошо</option>
+                    <option value="3">3 - Удовлетворительно</option>
+                    <option value="2">2 - Плохо</option>
+                    <option value="1">1 - Очень плохо</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comment">Комментарий</label>
+                <textarea name="comment" id="comment" class="form-control" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.review-form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+</style>
+{% endblock %} 

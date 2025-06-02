@@ -1,0 +1,175 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Статистика{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Статистика грузоперевозок</h1>
+
+    <div class="row">
+        <!-- Карточки с основными показателями -->
+        <div class="col-md-3 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Всего заказов</h5>
+                    <p class="card-text display-4">{{ total_orders }}</p>
+                    <p class="text-success">Выполнено: {{ completed_orders }}</p>
+                    <p class="text-danger">Отменено: {{ cancelled_orders }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Средний чек</h5>
+                    <p class="card-text display-4">{{ avg_order_price|floatformat:0 }}₽</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Водители</h5>
+                    <p class="card-text display-4">{{ total_drivers }}</p>
+                    <p class="text-muted">Средний опыт: {{ avg_driver_experience|floatformat:1 }} лет</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Транспорт</h5>
+                    <p class="card-text display-4">{{ total_vehicles }}</p>
+                    <p class="text-success">Доступно: {{ available_vehicles }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- График заказов по месяцам -->
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Количество заказов по месяцам</h5>
+                    {% if orders_by_month_graph %}
+                    <img src="data:image/png;base64,{{ orders_by_month_graph }}" class="img-fluid" alt="Заказы по месяцам">
+                    {% else %}
+                    <p class="text-center text-muted">Нет данных для отображения</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- График распределения статусов -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Статусы заказов</h5>
+                    {% if status_distribution_graph %}
+                    <img src="data:image/png;base64,{{ status_distribution_graph }}" class="img-fluid" alt="Распределение статусов">
+                    {% else %}
+                    <p class="text-center text-muted">Нет данных для отображения</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- График средней стоимости по типам транспорта -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Средняя стоимость заказа по типам транспорта</h5>
+                    {% if price_by_vehicle_graph %}
+                    <img src="data:image/png;base64,{{ price_by_vehicle_graph }}" class="img-fluid" alt="Стоимость по типам">
+                    {% else %}
+                    <p class="text-center text-muted">Нет данных для отображения</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- График топ-5 клиентов -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Топ-5 активных клиентов по количеству заказов</h5>
+                    {% if top_clients_graph %}
+                        <img src="data:image/png;base64,{{ top_clients_graph }}" class="img-fluid" alt="Топ клиентов">
+                    {% else %}
+                        <p class="text-center text-muted">Нет данных для отображения</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 10px;
+}
+.card-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+.display-4 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #007bff;
+}
+.text-success {
+    color: #28a745 !important;
+}
+.text-danger {
+    color: #dc3545 !important;
+}
+.text-muted {
+    color: #6c757d !important;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+</style>
+
+<script>
+// Функция для обновления графиков
+function refreshGraphs() {
+    fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Обновляем каждый график
+            document.querySelectorAll('.card img').forEach((img, index) => {
+                const newImg = doc.querySelectorAll('.card img')[index];
+                if (newImg) {
+                    img.src = newImg.src;
+                }
+            });
+            
+            // Обновляем статистику
+            document.querySelectorAll('.display-4').forEach((el, index) => {
+                const newEl = doc.querySelectorAll('.display-4')[index];
+                if (newEl) {
+                    el.textContent = newEl.textContent;
+                }
+            });
+        });
+}
+
+// Обновляем каждые 30 секунд
+setInterval(refreshGraphs, 30000);
+</script>
+{% endblock %} 

@@ -1,0 +1,143 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8"> {# Немного шире для большего количества полей #}
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Регистрация</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data"> {# Добавлен enctype #}
+                    {% csrf_token %}
+                    
+                    {{ form.non_field_errors }}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}:</label>
+                            {{ form.username.errors }}
+                            {{ form.username }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}:</label>
+                            {{ form.email.errors }}
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}:</label>
+                            {{ form.first_name.errors }}
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">{{ form.last_name.label }}:</label>
+                            {{ form.last_name.errors }}
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">{{ form.phone.label }}:</label>
+                        {{ form.phone.errors }}
+                        {{ form.phone }}
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        {{ form.is_driver.errors }}
+                        {{ form.is_driver }} 
+                        <label for="{{ form.is_driver.id_for_label }}" class="form-check-label">{{ form.is_driver.label }}</label>
+                    </div>
+
+                    {# Поля, отображаемые только если is_driver выбран #}
+                    <div id="driver-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label for="{{ form.experience.id_for_label }}" class="form-label">{{ form.experience.label }}:</label>
+                            {{ form.experience.errors }}
+                            {{ form.experience }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.categories.id_for_label }}" class="form-label">{{ form.categories.label }}:</label>
+                            {{ form.categories.errors }}
+                            {{ form.categories }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.birth_date.id_for_label }}" class="form-label">{{ form.birth_date.label }}:</label>
+                            {{ form.birth_date.errors }}
+                            {{ form.birth_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.photo.id_for_label }}" class="form-label">{{ form.photo.label }}:</label>
+                            {{ form.photo.errors }}
+                            {{ form.photo }}
+                        </div>
+                    </div>
+
+                    {# Поля, отображаемые только если is_driver НЕ выбран (т.е. для клиента) #}
+                    <div id="client-fields">
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">{{ form.address.label }}:</label>
+                            {{ form.address.errors }}
+                            {{ form.address }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.company_name.id_for_label }}" class="form-label">{{ form.company_name.label }}:</label>
+                            {{ form.company_name.errors }}
+                            {{ form.company_name }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">Пароль:</label>
+                        {{ form.password1.errors }}
+                        {{ form.password1 }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">Подтверждение пароля:</label>
+                        {{ form.password2.errors }}
+                        {{ form.password2 }}
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">Уже есть аккаунт? <a href="{% url 'main:login' %}">Войдите</a></p> {# Добавлено main: #}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const isDriverCheckbox = document.getElementById('{{ form.is_driver.id_for_label }}');
+    const driverFields = document.getElementById('driver-fields');
+    const clientFields = document.getElementById('client-fields');
+    const addressField = document.getElementById('{{ form.address.id_for_label }}').closest('.mb-3'); // Весь div поля адреса
+
+    function toggleFields() {
+        if (isDriverCheckbox.checked) {
+            driverFields.style.display = 'block';
+            clientFields.style.display = 'none';
+            addressField.style.display = 'none'; // Скрываем адрес для водителя
+        } else {
+            driverFields.style.display = 'none';
+            clientFields.style.display = 'block';
+            addressField.style.display = 'block'; // Показываем адрес для клиента
+        }
+    }
+
+    if (isDriverCheckbox) {
+        isDriverCheckbox.addEventListener('change', toggleFields);
+        toggleFields(); // Initial check
+    }
+});
+</script>
+
+{% endblock %} 

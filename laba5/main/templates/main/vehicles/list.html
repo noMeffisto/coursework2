@@ -1,0 +1,88 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Транспортные средства{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Наш автопарк</h1>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Тип транспорта</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="">Все типы</option>
+                        {% for type in vehicle_types %}
+                        <option value="{{ type.id }}" {% if type_filter == type.id|stringformat:"s" %}selected{% endif %}>
+                            {{ type.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="body" class="form-label">Тип кузова</label>
+                    <select name="body" id="body" class="form-select">
+                        <option value="">Все типы</option>
+                        {% for body in body_types %}
+                        <option value="{{ body.id }}" {% if body_filter == body.id|stringformat:"s" %}selected{% endif %}>
+                            {{ body.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="form-check mt-2">
+                        <input type="checkbox" name="available" id="available" class="form-check-input" {% if available %}checked{% endif %}>
+                        <label class="form-check-label" for="available">Только доступные</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Vehicles Grid -->
+    <div class="row">
+        {% for vehicle in vehicles %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if vehicle.image %}
+                <img src="{{ vehicle.image.url }}" class="card-img-top" alt="{{ vehicle }}">
+                {% else %}
+                <img src="{% if forloop.counter|divisibleby:3 %}https://motor-m.kiev.ua/images/header-car.webp{% elif forloop.counter|divisibleby:2 %}https://i-logistica.ru/upload/iblock/f91/f916b23424467fbc0c91abd9049e4d9a.jpg{% else %}https://biggy.kiev.ua/wp-content/uploads/2021/01/%D0%93%D1%80%D1%83%D0%B7%D0%BE%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B8-%D0%BD%D0%B5%D0%B4%D0%BE%D1%80%D0%BE%D0%B3%D0%BE.png{% endif %}" 
+                     class="card-img-top" alt="{{ vehicle }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ vehicle.brand }} {{ vehicle.model }}</h5>
+                    <p class="card-text">
+                        <strong>Тип:</strong> {{ vehicle.type }}<br>
+                        <strong>Кузов:</strong> {{ vehicle.body_type|default:"Не указан" }}<br>
+                        <strong>Год:</strong> {{ vehicle.year }}<br>
+                        <strong>Грузоподъемность:</strong> {{ vehicle.capacity }} кг<br>
+                        <strong>Статус:</strong> 
+                        {% if vehicle.is_available %}
+                        <span class="badge bg-success">Доступен</span>
+                        {% else %}
+                        <span class="badge bg-danger">Занят</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Транспортные средства не найдены
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

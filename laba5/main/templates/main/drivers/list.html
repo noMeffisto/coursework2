@@ -1,0 +1,78 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Наши водители{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Наши водители</h1>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="experience" class="form-label">Минимальный опыт (лет)</label>
+                    <select name="experience" id="experience" class="form-select">
+                        <option value="">Любой опыт</option>
+                        <option value="1" {% if experience_filter == "1" %}selected{% endif %}>От 1 года</option>
+                        <option value="3" {% if experience_filter == "3" %}selected{% endif %}>От 3 лет</option>
+                        <option value="5" {% if experience_filter == "5" %}selected{% endif %}>От 5 лет</option>
+                        <option value="10" {% if experience_filter == "10" %}selected{% endif %}>От 10 лет</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Drivers Grid -->
+    <div class="row">
+        {% for driver in drivers %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if driver.photo %}
+                <img src="{{ driver.photo.url }}" class="card-img-top" alt="{{ driver }}">
+                {% else %}
+                <img src="{% if forloop.counter|divisibleby:3 %}https://www.avtoshkolabars.ru/images/2017/03/voditel-novchok-chainik-neopytniy.jpg{% elif forloop.counter|divisibleby:2 %}https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHexvSfSIvkAL4-Nt6Lob-4xuO-Vn15X1TQw&s{% else %}https://gorodvitebsk.by/images_data/test/be7cdf76ba258e3d258fa848c8e97ae0.jpg{% endif %}" 
+                     class="card-img-top" alt="{{ driver }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ driver.user.get_full_name }}</h5>
+                    <p class="card-text">
+                        <strong>Опыт:</strong> {{ driver.experience }} лет<br>
+                        <strong>Категории:</strong> {{ driver.categories }}<br>
+                        {% if driver.vehicle %}
+                        <strong>Транспорт:</strong> {{ driver.vehicle }}<br>
+                        {% endif %}
+                        {% if driver.rating %}
+                        <strong>Рейтинг:</strong> 
+                        <span class="text-warning">
+                            {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= driver.rating %}
+                            <i class="fas fa-star"></i>
+                            {% else %}
+                            <i class="far fa-star"></i>
+                            {% endif %}
+                            {% endfor %}
+                            ({{ driver.rating|floatformat:1 }})
+                        </span><br>
+                        {% endif %}
+                        <strong>Выполнено заказов:</strong> {{ driver.orders_count }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Водители не найдены
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

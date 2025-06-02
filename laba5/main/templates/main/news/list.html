@@ -1,0 +1,57 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Новости - Грузоперевозки{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Новости</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">Новости компании</h1>
+
+    <div class="row">
+        {% for news_item in news %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        {% if news_item.image %}
+                        <img src="{{ news_item.image.url }}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="{{ news_item.title }}">
+                        {% else %}
+                        <div class="bg-light h-100 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-newspaper fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ news_item.title }}</h5>
+                            <p class="card-text">{{ news_item.content|truncatewords:30 }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-user"></i> {{ news_item.author.get_full_name }}
+                                    <span class="mx-2">|</span>
+                                    <i class="fas fa-calendar"></i> {{ news_item.created_at|date:"d.m.Y" }}
+                                </small>
+                            </p>
+                            <a href="{% url 'main:news_detail' news_item.id %}" class="btn btn-primary">Читать далее</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Новостей пока нет
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 
