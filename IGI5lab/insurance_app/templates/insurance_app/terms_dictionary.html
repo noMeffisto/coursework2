@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Словарь терминов - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"Словарь терминов и понятий" }}</h1>
+
+    {% if faqs %}
+        {% for faq_item in faqs %}
+            <div class="faq-item">
+                <h3>{{ faq_item.question }}</h3>
+                <p><strong>Ответ:</strong> {{ faq_item.answer|linebreaksbr }}</p>
+                <p><small>Добавлено: {{ faq_item.added_at|date:"d/m/Y" }}</small></p>
+            </div>
+            {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+    {% else %}
+        <p>В словаре пока нет терминов. Информация будет добавлена позже.</p>
+    {% endif %}
+{% endblock %} 

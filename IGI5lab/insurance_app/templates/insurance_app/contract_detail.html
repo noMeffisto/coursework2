@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p><a href="{% url 'insurance_app:contract_list' %}">&larr; К списку договоров</a></p>
+
+    <h3>Основная информация</h3>
+    <p><strong>Номер договора:</strong> {{ contract.id }}</p>
+    <p><strong>Клиент:</strong> {{ contract.client.get_full_name|default:contract.client.username }} 
+        {% if contract.client.client_profile and contract.client.client_profile.phone %}
+            (тел: {{ contract.client.client_profile.phone }})
+        {% elif contract.client.email %}
+             (email: {{ contract.client.email }})
+        {% endif %}
+    </p>
+    <p><strong>Вид страхования:</strong> {{ contract.insurance_type.name }}</p>
+    <p><strong>Описание объекта страхования:</strong><br>{{ contract.insured_object_description|linebreaksbr }}</p>
+    
+    <h3>Финансовые условия</h3>
+    <p><strong>Страховая сумма:</strong> {{ contract.insurance_sum }} руб.</p>
+    <p><strong>Тарифная ставка:</strong> {{ contract.tariff_rate }} ({{ contract.tariff_rate|floatformat:2 }}%)</p>
+    <p><strong>Страховой платеж (премия):</strong> {{ contract.insurance_payment|floatformat:2 }} руб.</p>
+
+    <h3>Сроки и участники</h3>
+    <p><strong>Дата начала действия:</strong> {{ contract.start_date|date:"d/m/Y" }}</p>
+    <p><strong>Дата окончания действия:</strong> {{ contract.end_date|date:"d/m/Y" }}</p>
+    <p><strong>Филиал заключения:</strong> {{ contract.branch.name }} ({{ contract.branch.address }})</p>
+    <p><strong>Страховой агент:</strong> {{ contract.agent|default:"Не указан" }}</p>
+    
+    <h3>Даты создания/обновления</h3>
+    <p><strong>Дата создания записи:</strong> {{ contract.created_at|date:"d/m/Y H:i:s" }} (UTC)</p>
+    <p><strong>Дата последнего обновления:</strong> {{ contract.updated_at|date:"d/m/Y H:i:s" }} (UTC)</p>
+    
+    <hr>
+    {% if user.is_authenticated %}
+        {% if user.is_superuser or user.agent_profile == contract.agent and contract.agent is not None %}
+            <a href="{% url 'insurance_app:contract_update' contract.pk %}" class="button">Редактировать договор</a>
+        {% endif %}
+        {% if user.is_superuser %}
+            <a href="{% url 'insurance_app:contract_delete' contract.pk %}" class="button-danger" style="margin-left:10px;">Удалить договор</a>
+        {% endif %}
+    {% endif %}
+
+{% endblock %} 

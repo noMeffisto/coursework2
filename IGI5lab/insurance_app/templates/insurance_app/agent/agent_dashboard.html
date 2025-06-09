@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{{ page_title }}</h1>
+    <div>
+        <a href="{% url 'insurance_app:agent_profile_edit' %}" class="btn btn-outline-secondary">Мой профиль</a>
+        <a href="{% url 'insurance_app:contract_create' %}" class="btn btn-primary">Оформить новый договор</a>
+    </div>
+</div>
+
+<p class="lead">Добро пожаловать, {{ agent.first_name }} {{ agent.last_name }}!</p>
+
+<!-- Мои заявки в работе -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h4 class="mb-0">Мои заявки в работе ({{ my_assigned_requests.count }})</h4>
+    </div>
+    {% if my_assigned_requests %}
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Клиент</th>
+                    <th scope="col">Вид страхования</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Дата подачи</th>
+                    <th scope="col">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in my_assigned_requests %}
+                <tr>
+                    <th scope="row">{{ request.id }}</th>
+                    <td>{{ request.client.get_full_name|default:request.client.username }}</td>
+                    <td>{{ request.insurance_type.name }}</td>
+                    <td><span class="badge bg-primary">{{ request.get_status_display }}</span></td>
+                    <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-success">Создать договор</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body text-center">
+        <p class="mb-0">У вас нет заявок в работе.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Свободные заявки -->
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4 class="mb-0">Свободные заявки ({{ pending_requests.count }})</h4>
+    </div>
+    {% if pending_requests %}
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Клиент</th>
+                    <th scope="col">Вид страхования</th>
+                    <th scope="col">Дата подачи</th>
+                    <th scope="col">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in pending_requests %}
+                <tr>
+                    <th scope="row">{{ request.id }}</th>
+                    <td>{{ request.client.get_full_name|default:request.client.username }}</td>
+                    <td>{{ request.insurance_type.name }}</td>
+                    <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        <form action="{% url 'insurance_app:assign_request' request.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-primary">Взять в работу</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body text-center">
+        <p class="mb-0">Нет новых заявок, ожидающих обработки.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Контакты - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"Наши контакты" }}</h1>
+
+    {% if staff_contacts %}
+        {% for contact in staff_contacts %}
+            <div class="contact-item" style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                <h3>{{ contact.last_name }} {{ contact.first_name }}</h3>
+                {% if contact.photo %}
+                    <img src="{{ contact.photo.url }}" alt="{{ contact.last_name }} {{ contact.first_name }}" style="max-width: 100px; height: auto; float: left; margin-right: 15px;">
+                {% endif %}
+                <p><strong>Должность:</strong> {{ contact.position }}</p>
+                {% if contact.phone %}
+                    <p><strong>Телефон:</strong> {{ contact.phone }}</p>
+                {% endif %}
+                {% if contact.email %}
+                    <p><strong>Email:</strong> <a href="mailto:{{ contact.email }}">{{ contact.email }}</a></p>
+                {% endif %}
+                {% if contact.birth_date %}
+                    <!-- <p><small>Дата рождения: {{ contact.birth_date|date:"d/m/Y" }}</small></p> -->
+                {% endif %}
+                <div style="clear: both;"></div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Контактная информация сотрудников будет добавлена позже.</p>
+    {% endif %}
+{% endblock %} 

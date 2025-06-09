@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load l10n %}{# Для форматирования чисел #}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+  <h2>{{ page_title }}</h2>
+
+  {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if report_data %}
+    <p><strong>Общая сумма комиссии по всем агентам: {{ total_commission_overall|unlocalize }} руб.</strong></p>
+    <table border="1" style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th>ID Договора</th>
+                <th>Филиал</th>
+                <th>Агент</th>
+                <th>Клиент</th>
+                <th>Вид страхования</th>
+                <th>Страх. сумма (руб.)</th>
+                <th>Тариф (%)</th>
+                <th>Страх. платеж (руб.)</th>
+                <th>% комиссии агента</th>
+                <th>Комиссия агента (руб.)</th>
+                <th>Дата договора</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in report_data %}
+            <tr>
+                <td><a href="{% url 'insurance_app:contract_detail' item.contract_id %}">{{ item.contract_id }}</a></td>
+                <td>{{ item.branch_name }}</td>
+                <td>{{ item.agent_name }}</td>
+                <td>{{ item.client_name }}</td>
+                <td>{{ item.insurance_type_name }}</td>
+                <td style="text-align: right;">{{ item.insurance_sum|unlocalize }}</td>
+                <td style="text-align: right;">{{ item.tariff_rate|stringformat:".4f" }}</td> {# Тариф может быть маленьким #}
+                <td style="text-align: right;">{{ item.insurance_payment|unlocalize }}</td>
+                <td style="text-align: right;">{{ item.agent_commission_percentage|unlocalize }}%</td>
+                <td style="text-align: right;"><strong>{{ item.agent_commission_amount|unlocalize }}</strong></td>
+                <td>{{ item.contract_start_date|date:"d.m.Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  {% else %}
+    <p>Нет данных для отображения в отчете. Убедитесь, что есть договоры, назначенные агентам, и у видов страхования указан процент комиссии.</p>
+  {% endif %}
+
+  <p><a href="{% if user.is_superuser %}{% url 'admin:index' %}{% else %}{% url 'insurance_app:home' %}{% endif %}">Назад</a></p>
+
+{% endblock %} 

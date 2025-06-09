@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Новости - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"Новости компании" }}</h1>
+
+    {% if articles %}
+        {% for article in articles %}
+            <article class="news-item">
+                <h2>{{ article.title }}</h2>
+                {% if article.image %}
+                    <img src="{{ article.image.url }}" alt="{{ article.title }}" style="max-width: 200px; height: auto; float: left; margin-right: 15px;">
+                {% endif %}
+                <p>{{ article.short_content }}</p>
+                <p><small>Опубликовано: {{ article.published_at|date:"d/m/Y H:i" }}</small></p>
+                {% comment %}
+                <!-- <p><a href="#">Читать далее...</a></p> Ссылка на полную статью будет позже -->
+                {% endcomment %}
+                <div style="clear: both;"></div>
+            </article>
+            {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+    {% else %}
+        <p>На данный момент новостей нет. Загляните позже!</p>
+    {% endif %}
+{% endblock %} 

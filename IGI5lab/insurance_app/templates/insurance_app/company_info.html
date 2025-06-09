@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}О компании - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"О компании" }}</h1>
+
+    {% if sections %}
+        {% for section in sections %}
+            <section class="company-section">
+                <h2>{{ section.title }}</h2>
+                <div>{{ section.content|linebreaksbr }}</div>
+            </section>
+            {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Информация о компании в данный момент не заполнена. Пожалуйста, зайдите позже.</p>
+    {% endif %}
+{% endblock %} 

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Виды страхования - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"Виды страхования и тарифы" }}</h1>
+
+    {% if insurance_types %}
+        {% for itype in insurance_types %}
+            <div class="insurance-type-item" style="margin-bottom: 15px;">
+                <h3>{{ itype.name }}</h3>
+                <p>{{ itype.description|linebreaksbr }}</p>
+                {% comment %}
+                <!-- 
+                    Информация о тарифных ставках может быть более сложной 
+                    и зависеть от многих факторов. Пока выводим только 
+                    комиссию агента для примера, как было в αρχльном ТЗ.
+                    Реальные тарифы будут отображаться при расчете/оформлении договора.
+                -->
+                {% endcomment %}
+                <p><small>Базовая комиссия агенту: {{ itype.agent_commission_percentage }}%</small></p>
+            </div>
+            {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Информация о видах страхования и тарифах пока отсутствует.</p>
+    {% endif %}
+{% endblock %} 

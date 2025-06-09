@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title }}</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        {# Отображение не полей ошибок (non-field errors) #}
+        {% if form.non_field_errors %}
+            <div class="form-errors non-field-errors">
+                {% for error in form.non_field_errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <table>
+            {{ form.as_table }}
+        </table>
+        {# Или можно выводить поля по одному для большей кастомизации:
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %} 
+        #}
+        <br>
+        <button type="submit">Сохранить договор</button>
+        {% if contract %}
+            <a href="{% url 'insurance_app:contract_detail' contract.pk %}" style="margin-left: 10px;">Отмена</a>
+        {% else %}
+            <a href="{% url 'insurance_app:contract_list' %}" style="margin-left: 10px;">Отмена</a>
+        {% endif %}
+    </form>
+
+{% endblock %} 

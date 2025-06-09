@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Политика конфиденциальности{% endblock %}
+
+{% block content %}
+<h1 style="color:red;">DEBUG: ЭТО ШАБЛОН ИЗ templates/core/privacy_policy.html</h1>
+<div class="container mt-4">
+    <h1>Политика конфиденциальности</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Основная информация</h3>
+        </div>
+        <div class="card-body">
+            <p>Мы ценим вашу конфиденциальность и стремимся обеспечить защиту ваших персональных данных. Настоящая политика конфиденциальности описывает, как мы собираем, используем и защищаем информацию, которую вы предоставляете нам при использовании нашего сайта.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Цитата дня</h3>
+                    <small class="text-muted">Источник: API zenquotes.io</small>
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote">
+                        <p class="mb-0">{{ quote }}</p>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Погода в Шклове</h3>
+                    <small class="text-muted">Источник: API wttr.in</small>
+                </div>
+                <div class="card-body">
+                    <p class="lead">{{ weather }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Сбор и использование информации</h3>
+        </div>
+        <div class="card-body">
+            <h5>1. Персональные данные</h5>
+            <p>Мы собираем следующие виды персональных данных:</p>
+            <ul>
+                <li>Контактная информация (имя, email, телефон)</li>
+                <li>Информация о страховании</li>
+                <li>История взаимодействия с нашим сервисом</li>
+            </ul>
+
+            <h5>2. Использование данных</h5>
+            <p>Мы используем собранную информацию для:</p>
+            <ul>
+                <li>Предоставления услуг страхования</li>
+                <li>Улучшения качества обслуживания</li>
+                <li>Связи с клиентами</li>
+                <li>Выполнения юридических обязательств</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Защита данных</h3>
+        </div>
+        <div class="card-body">
+            <p>Мы принимаем все необходимые меры для защиты ваших персональных данных:</p>
+            <ul>
+                <li>Используем шифрование данных</li>
+                <li>Регулярно обновляем системы безопасности</li>
+                <li>Ограничиваем доступ к персональным данным</li>
+                <li>Проводим регулярные проверки безопасности</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Ваши права</h3>
+        </div>
+        <div class="card-body">
+            <p>Вы имеете право:</p>
+            <ul>
+                <li>Получить доступ к своим персональным данным</li>
+                <li>Требовать исправления неточных данных</li>
+                <li>Требовать удаления своих данных</li>
+                <li>Возражать против обработки данных</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Контактная информация</h3>
+        </div>
+        <div class="card-body">
+            <p>Если у вас есть вопросы относительно нашей политики конфиденциальности, пожалуйста, свяжитесь с нами:</p>
+            <ul>
+                <li>Email: privacy@example.com</li>
+                <li>Телефон: +375 (XX) XXX-XX-XX</li>
+                <li>Адрес: г. Шклов, ул. Примерная, д. 1</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Техническая информация</h3>
+        </div>
+        <div class="card-body">
+            <h5>Текущее время:</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Локальное время: {{ now|date:"d.m.Y H:i:s" }}</li>
+                <li class="list-group-item">UTC время: {{ now_utc|date:"d.m.Y H:i:s" }}</li>
+                <li class="list-group-item">UTC-3 время: {{ now_utc_minus3|date:"d.m.Y H:i:s" }}</li>
+                <li class="list-group-item">Текущая временная зона: {{ TIME_ZONE }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{{ page_title }}</h1>
+    <a href="{% url 'insurance_app:request_create' %}" class="btn btn-primary">Подать новую заявку</a>
+</div>
+
+{% if requests %}
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Вид страхования</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Назначенный агент</th>
+                    <th scope="col">Дата подачи</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <th scope="row">{{ request.id }}</th>
+                    <td>{{ request.insurance_type.name }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if request.status == 'pending' %}bg-warning text-dark
+                            {% elif request.status == 'assigned' %}bg-info text-dark
+                            {% elif request.status == 'processing' %}bg-primary
+                            {% elif request.status == 'completed' %}bg-success
+                            {% elif request.status == 'cancelled' %}bg-danger
+                            {% else %}bg-secondary
+                            {% endif %}">
+                            {{ request.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ request.assigned_agent.get_full_name_display|default:"Не назначен" }}</td>
+                    <td>{{ request.created_at|date:"d.m.Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <p class="lead">У вас пока нет ни одной заявки.</p>
+    <p>Вы можете подать свою первую заявку прямо сейчас.</p>
+</div>
+{% endif %}
+
+{% endblock %} 

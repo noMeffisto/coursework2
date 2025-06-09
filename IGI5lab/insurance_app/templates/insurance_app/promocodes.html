@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Промокоды и купоны - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"Промокоды, купоны и акции" }}</h1>
+
+    <h2>Действующие промокоды и купоны</h2>
+    {% if active_promocodes %}
+        {% for promo in active_promocodes %}
+            <div class="promocode-item active" style="border: 1px solid green; padding: 10px; margin-bottom: 10px;">
+                <h3>{{ promo.code }}</h3>
+                <p>{{ promo.description|linebreaksbr }}</p>
+                {% if promo.discount_percentage %}
+                    <p><strong>Скидка:</strong> {{ promo.discount_percentage }}%</p>
+                {% elif promo.discount_amount %}
+                    <p><strong>Скидка:</strong> {{ promo.discount_amount }} руб.</p> {# Или другая валюта #}
+                {% endif %}
+                <p><small>Действует с: {{ promo.valid_from|date:"d/m/Y" }} по {{ promo.valid_to|date:"d/m/Y" }}</small></p>
+                {% if promo.applicable_insurance_types.all %}
+                    <p><small>Применим к: 
+                        {% for type in promo.applicable_insurance_types.all %}
+                            {{ type.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </small></p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>В настоящее время действующих промокодов и купонов нет.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Архивные промокоды и купоны</h2>
+    {% if archived_promocodes %}
+        {% for promo in archived_promocodes %}
+            <div class="promocode-item archived" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background-color: #f9f9f9;">
+                <h4>{{ promo.code }}</h4>
+                <p>{{ promo.description|linebreaksbr }}</p>
+                <p><small>Срок действия: {{ promo.valid_from|date:"d/m/Y" }} - {{ promo.valid_to|date:"d/m/Y" }}</small></p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Архивных промокодов и купонов нет.</p>
+    {% endif %}
+{% endblock %} 

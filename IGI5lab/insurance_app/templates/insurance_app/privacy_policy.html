@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Политика конфиденциальности{% endblock %}
+
+{% block content %}
+    <h1>Политика конфиденциальности</h1>
+    <p>Мы ценим вашу конфиденциальность и стремимся обеспечить защиту ваших персональных данных.</p>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Цитата дня</h3>
+            <small class="text-muted">Источник: API zenquotes.io</small>
+        </div>
+        <div class="card-body">
+            <blockquote class="blockquote">
+                <p class="mb-0">{{ quote }}</p>
+            </blockquote>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Погода в Шклове</h3>
+            <small class="text-muted">Источник: API wttr.in</small>
+        </div>
+        <div class="card-body">
+            <p class="lead">{{ weather }}</p>
+        </div>
+    </div>
+{% endblock %} 

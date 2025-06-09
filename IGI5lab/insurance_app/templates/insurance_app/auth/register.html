@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title|default:"Регистрация" }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h2 class="mb-4 text-center">{{ page_title|default:"Создание аккаунта" }}</h2>
+        <p class="text-center text-muted mb-4">Пожалуйста, заполните форму ниже, чтобы создать аккаунт.</p>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate class="needs-validation">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <p class="form-text text-muted"><small>Пароль должен содержать как минимум 8 символов, не должен быть слишком распространенным и не должен состоять только из цифр.</small></p>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">Зарегистрироваться</button>
+            </div>
+        </form>
+        <p class="mt-4 text-center">Уже есть аккаунт? <a href="{% url 'insurance_app:login' %}">Войти</a></p>
+    </div>
+</div>
+{% endblock %} 

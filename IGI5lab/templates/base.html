@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Страховая компания{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    {% comment %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> 
+    {% endcomment %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'insurance_app:home' %}">Страховая Компания</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" aria-current="page" href="{% url 'insurance_app:home' %}">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'news_list' %}active{% endif %}" href="{% url 'insurance_app:news_list' %}">Новости</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPublicLinks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Информация
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownPublicLinks">
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'public_branches' %}active{% endif %}" href="{% url 'insurance_app:public_branches' %}">Филиалы</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'public_insurance_types' %}active{% endif %}" href="{% url 'insurance_app:public_insurance_types' %}">Виды страхования</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'vacancies' %}active{% endif %}" href="{% url 'insurance_app:vacancies' %}">Вакансии</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'reviews' %}active{% endif %}" href="{% url 'insurance_app:reviews' %}">Отзывы</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'promocodes' %}active{% endif %}" href="{% url 'insurance_app:promocodes' %}">Промокоды</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'company_info' %}active{% endif %}" href="{% url 'insurance_app:company_info' %}">О компании</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'contacts' %}active{% endif %}" href="{% url 'insurance_app:contacts' %}">Контакты</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'terms_dictionary' %}active{% endif %}" href="{% url 'insurance_app:terms_dictionary' %}">Словарь терминов</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'privacy_policy' %}active{% endif %}" href="{% url 'insurance_app:privacy_policy' %}">Политика конфиденциальности</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUserMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUserMenu">
+                                <li><a class="dropdown-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'insurance_app:profile' %}">Личный кабинет</a></li>
+                                {% if user.client_profile %}
+                                <li><a class="dropdown-item {% if 'request' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'insurance_app:request_list' %}">Мои заявки</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item {% if request.resolver_match.url_name == 'contract_list' %}active{% endif %}" href="{% url 'insurance_app:contract_list' %}">Мои договоры</a></li>
+                                {% if user.agent_profile %}
+                                    <li><a class="dropdown-item {% if request.resolver_match.url_name == 'agent_dashboard' %}active{% endif %}" href="{% url 'insurance_app:agent_dashboard' %}">Панель агента</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item {% if request.resolver_match.url_name == 'password_change' %}active{% endif %}" href="{% url 'insurance_app:password_change' %}">Сменить пароль</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% if user.is_superuser %}
+                                    <li><a class="dropdown-item" href="{% url 'admin:index' %}">Админ-панель Django</a></li>
+                                    <li><a class="dropdown-item {% if request.resolver_match.url_name == 'admin_statistics' %}active{% endif %}" href="{% url 'insurance_app:admin_statistics' %}">Статистика</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                {% endif %}
+                                <li>
+                                    <form action="{% url 'insurance_app:logout' %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">Выйти</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'insurance_app:login' %}">Войти</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if 'register' in request.resolver_match.url_name %}active{% endif %}" href="#" id="navbarDropdownRegister" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Регистрация
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownRegister">
+                                <li><a class="dropdown-item" href="{% url 'insurance_app:register_client' %}">Как клиент</a></li>
+                                <li><a class="dropdown-item" href="{% url 'insurance_app:register_agent' %}">Как агент</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <main class="my-4">
+            {% block content %}
+            <!-- Содержимое конкретной страницы будет здесь -->
+            {% endblock %}
+        </main>
+
+        <hr>
+        <footer class="py-3 my-4">
+            <p class="text-center text-muted">&copy; {% now "Y" %} Страховая компания. Все права защищены.</p>
+            <p class="text-center text-muted">Текущая дата: {% now "d/m/Y H:i" %}</p> 
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {% comment %}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% endcomment %}
+</body>
+</html> 

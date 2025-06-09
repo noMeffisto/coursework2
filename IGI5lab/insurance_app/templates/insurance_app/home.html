@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>Добро пожаловать на сайт нашей страховой компании!</h1>
+    
+    {% if latest_article %}
+        <h2>Последняя новость</h2>
+        <article>
+            <h3>{{ latest_article.title }}</h3>
+            {% if latest_article.image %}
+                <img src="{{ latest_article.image.url }}" alt="{{ latest_article.title }}" style="max-width: 300px; height: auto;">
+            {% endif %}
+            <p>{{ latest_article.short_content }}</p>
+            <p><small>Опубликовано: {{ latest_article.published_at|date:"d/m/Y H:i" }}</small></p>
+            {% comment %}
+            <!-- <a href="#">Читать далее...</a>  Ссылка на полную статью будет позже -->
+            {% endcomment %}
+        </article>
+    {% else %}
+        <p>Пока нет новостей для отображения на главной странице.</p>
+    {% endif %}
+
+    <hr>
+    <p>Это главная страница. Здесь будет размещена краткая информация о последней опубликованной статье.</p>
+    
+    <section>
+        <h2>Быстрые ссылки</h2>
+        <ul>
+            <li><a href="{% url 'insurance_app:public_insurance_types' %}">Наши услуги страхования</a></li>
+            <li><a href="{% url 'insurance_app:public_branches' %}">Найти ближайший филиал</a></li>
+            <li><a href="{% url 'insurance_app:reviews' %}">Прочитать отзывы клиентов</a></li>
+        </ul>
+    </section>
+
+{% endblock %} 

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+  <h2>{{ page_title }}</h2>
+
+  {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if clients %}
+    <table>
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Дата рождения</th>
+                {# Можно добавить ссылку на список договоров этого клиента с этим агентом #}
+            </tr>
+        </thead>
+        <tbody>
+            {% for client_user in clients %}
+            <tr>
+                <td>{{ client_user.get_full_name }} ({{ client_user.username }})</td>
+                <td>{{ client_user.email }}</td>
+                <td>
+                    {% if hasattr client_user 'client_profile' and client_user.client_profile.phone %}
+                        {{ client_user.client_profile.phone }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if hasattr client_user 'client_profile' and client_user.client_profile.birth_date %}
+                        {{ client_user.client_profile.birth_date|date:"d.m.Y" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  {% else %}
+    <p>У вас пока нет клиентов.</p>
+  {% endif %}
+
+  <p><a href="{% url 'insurance_app:agent_dashboard' %}">Вернуться на панель агента</a></p>
+
+{% endblock %} 

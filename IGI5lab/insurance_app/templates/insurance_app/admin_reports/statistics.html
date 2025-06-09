@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ page_title }}</h1>
+
+<div class="row">
+    <!-- Contracts per Month -->
+    <div class="col-xl-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Динамика заключения договоров</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="contractsByMonthChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insurance Sum per Month -->
+    <div class="col-xl-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Динамика страховых сумм</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="sumByMonthChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Contracts by Type -->
+    <div class="col-xl-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Популярность видов страхования</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-pie pt-4">
+                    <canvas id="contractsByTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contracts by Branch -->
+    <div class="col-xl-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Эффективность филиалов</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-bar">
+                    <canvas id="contractsByBranchChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Data from Django
+    const contractsByMonthData = JSON.parse('{{ contracts_by_month_json|escapejs }}');
+    const sumByMonthData = JSON.parse('{{ sum_by_month_json|escapejs }}');
+    const contractsByTypeData = JSON.parse('{{ contracts_by_type_json|escapejs }}');
+    const contractsByBranchData = JSON.parse('{{ contracts_by_branch_json|escapejs }}');
+
+    // Chart 1: Contracts by Month (Line)
+    new Chart(document.getElementById('contractsByMonthChart'), {
+        type: 'line',
+        data: {
+            labels: contractsByMonthData.labels,
+            datasets: [{
+                label: 'Количество договоров',
+                data: contractsByMonthData.data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+                tension: 0.1
+            }]
+        }
+    });
+
+    // Chart 2: Sum by Month (Line)
+    new Chart(document.getElementById('sumByMonthChart'), {
+        type: 'line',
+        data: {
+            labels: sumByMonthData.labels,
+            datasets: [{
+                label: 'Страховая сумма (руб.)',
+                data: sumByMonthData.data,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: true,
+                tension: 0.1
+            }]
+        }
+    });
+
+    // Chart 3: Contracts by Type (Pie)
+    new Chart(document.getElementById('contractsByTypeChart'), {
+        type: 'pie',
+        data: {
+            labels: contractsByTypeData.labels,
+            datasets: [{
+                label: 'Кол-во договоров',
+                data: contractsByTypeData.data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)', 'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)', 'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)', 'rgba(255, 159, 64, 0.8)'
+                ]
+            }]
+        }
+    });
+
+    // Chart 4: Contracts by Branch (Bar)
+    new Chart(document.getElementById('contractsByBranchChart'), {
+        type: 'bar',
+        data: {
+            labels: contractsByBranchData.labels,
+            datasets: [{
+                label: 'Кол-во договоров',
+                data: contractsByBranchData.data,
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

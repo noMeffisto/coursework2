@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+  <h2>{{ page_title }}</h2>
+
+  {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    
+    <h3>Данные пользователя</h3>
+    <table>
+        {{ user_form.as_table }}
+    </table>
+    
+    <h3>Данные профиля клиента</h3>
+    <table>
+        {{ profile_form.as_table }}
+    </table>
+    
+    <button type="submit">Сохранить изменения</button>
+  </form>
+  <p><a href="{% url 'insurance_app:home' %}">На главную</a></p>
+  <p><a href="{% url 'insurance_app:password_change' %}">Сменить пароль</a></p>
+
+  <hr>
+  <div class="mt-4">
+    <h3>Мои отзывы</h3>
+    {% if user_reviews %}
+        <ul class="list-group mb-3">
+            {% for review in user_reviews %}
+                <li class="list-group-item">
+                    <p class="mb-1">"{{ review.text|truncatewords:20 }}"</p>
+                    <small class="text-muted">Оставлен: {{ review.created_at|date:"d.m.Y H:i" }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Вы еще не оставляли отзывов.</p>
+    {% endif %}
+    <a href="{% url 'insurance_app:user_reviews' %}" class="btn btn-secondary btn-sm">Посмотреть все мои отзывы</a>
+    <a href="{% url 'insurance_app:review_create' %}" class="btn btn-primary btn-sm">Оставить новый отзыв</a>
+  </div>
+
+{% endblock %} 

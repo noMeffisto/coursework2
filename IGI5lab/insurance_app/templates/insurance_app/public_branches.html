@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Наши филиалы - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"Филиалы компании" }}</h1>
+
+    {% if branches %}
+        {% for branch in branches %}
+            <div class="branch-item" style="margin-bottom: 15px;">
+                <h3>{{ branch.name }}</h3>
+                <p><strong>Адрес:</strong> {{ branch.address }}</p>
+                <p><strong>Телефон:</strong> {{ branch.phone }}</p>
+            </div>
+            {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Информация о филиалах компании пока отсутствует.</p>
+    {% endif %}
+{% endblock %} 

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title|default:"Список договоров" }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page_title|default:"Список договоров страхования" }}</h1>
+
+    {% if user.is_authenticated %}
+        {% if user.is_superuser or user.agent_profile %}
+            <p><a href="{% url 'insurance_app:contract_create' %}" class="btn btn-primary mb-3">Оформить новый договор</a></p>
+        {% endif %}
+    {% endif %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if contracts %}
+        <table class="table table-striped table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>Номер</th>
+                    <th>Клиент</th>
+                    <th>Вид страхования</th>
+                    <th>Агент</th>
+                    <th>Филиал</th>
+                    <th>Дата начала</th>
+                    <th>Дата окончания</th>
+                    <th>Страх. сумма</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contract in contracts %}
+                    <tr>
+                        <td><a href="{% url 'insurance_app:contract_detail' contract.pk %}">{{ contract.id }}</a></td>
+                        <td>{{ contract.client.get_full_name|default:contract.client.username }}</td>
+                        <td>{{ contract.insurance_type.name }}</td>
+                        <td>{{ contract.agent|default:"-" }}</td>
+                        <td>{{ contract.branch.name }}</td>
+                        <td>{{ contract.start_date|date:"d/m/Y" }}</td>
+                        <td>{{ contract.end_date|date:"d/m/Y" }}</td>
+                        <td>{{ contract.insurance_sum }}</td>
+                        <td>
+                            <a href="{% url 'insurance_app:contract_detail' contract.pk %}" class="btn btn-sm btn-info">Просмотр</a>
+                            {% if user.is_superuser or user.agent_profile == contract.agent %}
+                                <a href="{% url 'insurance_app:contract_update' contract.pk %}" class="btn btn-sm btn-warning">Редакт.</a>
+                            {% endif %}
+                            {% if user.is_superuser %}
+                                <a href="{% url 'insurance_app:contract_delete' contract.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if is_paginated %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; первая</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">последняя &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Нет договоров для отображения.</p>
+        {% if not user.is_authenticated %}
+             <p><a href="{% url 'insurance_app:login' %}" class="btn btn-primary">Войдите</a>, чтобы увидеть свои договоры или <a href="{% url 'insurance_app:register' %}" class="btn btn-secondary">зарегистрируйтесь</a>.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %} 
